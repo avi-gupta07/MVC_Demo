@@ -1,0 +1,116 @@
+﻿@model MVC_Demo.Models.CompleteModel
+@Scripts.Render("~/bundles/jquery")
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Welcome to my user Selection Index page</h2>
+
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.LabelFor(model => model.Country, new { @class = "control-label col-md-2" })
+        @Html.DropDownList("CountryList", new List<SelectListItem> { }, "Select Country")
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.Province, new { @class = "control-label col-md-2" })
+        @Html.DropDownList("ProvinceList", new List<SelectListItem> { }, "Select Province")
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.City, new { @class = "control-label col-md-2" })
+        @Html.DropDownList("CityList", new List<SelectListItem> { }, "Select City")
+    </div>
+
+    <div>
+        <input type='submit' id="sumbit">
+    </div>
+
+    <div id="mydiv">
+    </div>
+}
+
+@*<script type="text/javascript" >
+        $(document).ready(function () {
+            console.log("script loaded here!!!!!!!!")
+        });
+    </script>*@
+
+<script type="text/javascript">
+    function populateCountry() {
+        $.ajax({
+            url: '/userSelection/FetchCountries',
+            type: 'get',
+            dataType: 'json',
+            success: function (response) {
+
+                $.each(response, function (key, value) {
+                    // Perform operations with key and value
+                    $("#CountryList").append("<option value="+value.CountryID+">"+value.CountryName+"</option>");
+                    console.log('Key:', key);
+                    console.log('Value:', value);                   
+                });
+            }
+        })
+    }
+
+    function populateProvince(cid) {
+        $.ajax({
+            url: '/userSelection/FetchProvinces?Cid=' + cid,
+            type: 'get',
+            dataType: 'json',
+            success: function (response) {
+                $.each(response, function (key, value) {
+                    // Perform operations with key and value
+                    $("#ProvinceList").append("<option value=" + value.ProvinceID + ">" + value.ProvinceName + "</option>");
+                    console.log('Key:', key);
+                    console.log('Value:', value);
+                });
+            }
+        })
+    }
+
+    function populateCity(pid) {
+        $.ajax({
+            url: '/userSelection/FetchCities?Pid=' + pid,
+            type: 'get',
+            dataType: 'json',
+            success: function (response) {
+                $.each(response, function (key, value) {
+                    // Perform operations with key and value
+                    $("#CityList").append("<option value=" + value.CityID + ">" + value.CityName + "</option>");
+                    console.log('Key:', key);
+                    console.log('Value:', value);
+                });
+            }
+        })
+    }
+
+
+    $(document).ready(function () {
+        //testing
+        console.log("vsdafuis");
+
+        // calling the function
+        populateCountry(); // this will load the options in the country drop down list
+
+        $("#CountryList").change(function () {
+            console.log("Selected list item changed");
+            var selectedValue = $(this).val();
+            populateProvince(selectedValue);
+        });
+
+        $("#ProvinceList").change(function () {
+            
+            var selectedValue = $(this).val();
+            populateCity(selectedValue);
+        });
+
+
+    });
+
+</script>
+
